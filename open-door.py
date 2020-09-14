@@ -13,8 +13,10 @@ def login_csb(user, password):
         'pwd': password,
         'redirect_to': 'https://www.chalmersstudentbostader.se/min-bostad/'
     }
+    print("Accessing " + url)
     r = session.post(url, data=data)
-    if "Rikard Legge" not in r.text:
+    print("Got response " + r.text)
+    if "till Mina Sidor" not in r.text:
         raise Exception("Failed to login to csb")
     return session
 
@@ -26,8 +28,10 @@ def login_aptus(csb_session):
     j = json.loads(data)
     apt_url = j["data"]["aptuslogin@APTUSPORT"]["objekt"][0]["aptusUrl"]
 
+    print("Accessing " + apt_url)
     apt_session = requests.Session()
     r = apt_session.get(apt_url)
+    print("Got response " + r.text)
     if "lockUnlockButton" not in r.text:
         raise Exception("Failed to login to aptus")
     return apt_session
@@ -35,7 +39,9 @@ def login_aptus(csb_session):
 
 def unlock_door(session, door):
     url = "https://apt-www.chalmersstudentbostader.se/AptusPortal/Lock/UnlockEntryDoor/" + door
+    print("Accessing " + url)
     r = session.get(url)
+    print("Got response " + r.text)
     if "Dörren är upplåst" not in r.text:
         raise Exception("Failed to open door")
 
@@ -51,6 +57,7 @@ def main():
         "90": "123612",
         "92": "123613",
         "94": "123626",
+        "4": "738903"
     }
 
     if len(sys.argv) != 2:
